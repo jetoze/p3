@@ -1,17 +1,24 @@
 package p3;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ListMultimap;
+
 public final class Persister {
     private final Map<String, String> stringVals = new HashMap<>();
     private final Map<String, Integer> intVals = new HashMap<>();
     private final Map<String, Long> longVals = new HashMap<>();
+    private final ListMultimap<String, Persister> children = ArrayListMultimap.create();
     
     public void putString(String key, String value) {
         stringVals.put(requireNonNull(key), requireNonNull(value));
@@ -68,5 +75,24 @@ public final class Persister {
     
     public long getLong(String key, long defVal) {
         return checkLong(key).orElse(defVal);
+    }
+    
+    public Persister newChild(String name) {
+        requireNonNull(name);
+        Persister child = new Persister();
+        children.put(name, child);
+        return child;
+    }
+    
+    public ImmutableList<Persister> getChildren(String name) {
+        requireNonNull(name);
+        return ImmutableList.copyOf(children.get(name));
+    }
+    
+    public Persister getChild(String name) {
+        requireNonNull(name);
+        List<Persister> list = children.get(name);
+        checkArgument(list.size() == 1, "Expected 1 child with name %s but found %s", name, list.size());
+        return list.get(0);
     }
 }
