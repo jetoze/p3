@@ -96,7 +96,7 @@ public final class Persister {
         Double val = doubleVals.get(key);
         return (val == null)
                 ? OptionalDouble.empty()
-                : OptionalDouble.of(val.longValue());
+                : OptionalDouble.of(val.doubleValue());
     }
     
     public double getDouble(String key) {
