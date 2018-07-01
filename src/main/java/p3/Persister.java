@@ -6,6 +6,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
@@ -135,9 +136,33 @@ public final class Persister {
         for (Map.Entry<String, Long> e: longVals.entrySet()) {
             store.putLong(e.getKey(), e.getValue());
         }
+        for (Map.Entry<String, Double> e: doubleVals.entrySet()) {
+            store.putDouble(e.getKey(), e.getValue());
+        }
         for (Map.Entry<String, Persister> e : children.entries()) {
             PersisterStore childStore = store.newChild(e.getKey());
             e.getValue().storeIn(childStore);
         }
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof Persister) {
+            Persister that = (Persister) obj;
+            return this.stringVals.equals(that.stringVals) &&
+                    this.intVals.equals(that.intVals) &&
+                    this.longVals.equals(that.longVals) &&
+                    this.doubleVals.equals(that.doubleVals) &&
+                    this.children.equals(that.children);
+        }
+        return false;
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.stringVals, this.intVals, this.longVals, this.doubleVals, this.children);
     }
 }
