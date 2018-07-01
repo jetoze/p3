@@ -60,6 +60,8 @@ public final class XmlPersisterStore extends PersisterStore {
         Element e = document.createElement(name);
         if (parent != null) {
             parent.appendChild(e);
+        } else {
+            document.appendChild(e);
         }
         return e;
     }
