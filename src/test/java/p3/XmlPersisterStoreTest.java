@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-public final class XmlStorePersisterTest {
+public final class XmlPersisterStoreTest {
 
     @Test
     public void hierarchicalPersister() throws Exception {
