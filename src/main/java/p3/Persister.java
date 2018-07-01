@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
 
@@ -15,9 +16,17 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ListMultimap;
 
 public final class Persister {
+    // TODO: Boolean support. JDK does not provide an OptionalBoolean. A couple of options:
+    //         1. Use Optional<Boolean>
+    //         2. Write our own OptionalBoolean (or add one to samling)
+    //         3. Do not use optional, but let the absence of a key indicate false.
+    // TODO: Documentation. For example, explain how each value type has its own key set,
+    //       meaning it's possible to have an int value and a string value mapped to
+    //       the same key.
     private final Map<String, String> stringVals = new HashMap<>();
     private final Map<String, Integer> intVals = new HashMap<>();
     private final Map<String, Long> longVals = new HashMap<>();
+    private final Map<String, Double> doubleVals = new HashMap<>();
     private final ListMultimap<String, Persister> children = ArrayListMultimap.create();
     
     public void putString(String key, String value) {
@@ -77,6 +86,26 @@ public final class Persister {
         return checkLong(key).orElse(defVal);
     }
     
+    public void putDouble(String key, double value) {
+        doubleVals.put(requireNonNull(key), value);
+    }
+    
+    public OptionalDouble checkDouble(String key) {
+        requireNonNull(key);
+        Double val = doubleVals.get(key);
+        return (val == null)
+                ? OptionalDouble.empty()
+                : OptionalDouble.of(val.longValue());
+    }
+    
+    public double getDouble(String key) {
+        return checkDouble(key).orElseThrow(() -> new IllegalArgumentException("No such double: " + key));
+    }
+    
+    public double getDouble(String key, double defVal) {
+        return checkDouble(key).orElse(defVal);
+    }
+    
     public Persister newChild(String name) {
         requireNonNull(name);
         Persister child = new Persister();
@@ -94,5 +123,21 @@ public final class Persister {
         List<Persister> list = children.get(name);
         checkArgument(list.size() == 1, "Expected 1 child with name %s but found %s", name, list.size());
         return list.get(0);
+    }
+    
+    void storeIn(PersisterStore store) {
+        for (Map.Entry<String, String> e: stringVals.entrySet()) {
+            store.putString(e.getKey(), e.getValue());
+        }
+        for (Map.Entry<String, Integer> e : intVals.entrySet()) {
+            store.putInt(e.getKey(), e.getValue());
+        }
+        for (Map.Entry<String, Long> e: longVals.entrySet()) {
+            store.putLong(e.getKey(), e.getValue());
+        }
+        for (Map.Entry<String, Persister> e : children.entries()) {
+            PersisterStore childStore = store.newChild(e.getKey());
+            e.getValue().storeIn(childStore);
+        }
     }
 }
