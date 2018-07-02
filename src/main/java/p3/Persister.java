@@ -24,6 +24,9 @@ public final class Persister {
     // TODO: Documentation. For example, explain how each value type has its own key set,
     //       meaning it's possible to have an int value and a string value mapped to
     //       the same key.
+    // TODO: Associate a name with each persister? Coupled with a method getAllChildren()
+    //       this can be useful in cases where we otherwise would have to store the name
+    //       (or something equivalent) explicitly.
     private final Map<String, String> stringVals = new HashMap<>();
     private final Map<String, Integer> intVals = new HashMap<>();
     private final Map<String, Long> longVals = new HashMap<>();
