@@ -30,8 +30,9 @@ public final class Persister {
     private final Map<String, Double> doubleVals = new HashMap<>();
     private final ListMultimap<String, Persister> children = ArrayListMultimap.create();
     
-    public void putString(String key, String value) {
+    public Persister putString(String key, String value) {
         stringVals.put(requireNonNull(key), requireNonNull(value));
+        return this;
     }
     
     public Optional<String> checkString(String key) {
@@ -47,8 +48,9 @@ public final class Persister {
         return checkString(key).orElse(defVal);
     }
     
-    public void putInt(String key, int value) {
+    public Persister putInt(String key, int value) {
         intVals.put(requireNonNull(key), value);
+        return this;
     }
     
     public OptionalInt checkInt(String key) {
@@ -67,8 +69,9 @@ public final class Persister {
         return checkInt(key).orElse(defVal);
     }
     
-    public void putLong(String key, long value) {
+    public Persister putLong(String key, long value) {
         longVals.put(requireNonNull(key), value);
+        return this;
     }
     
     public OptionalLong checkLong(String key) {
@@ -87,8 +90,9 @@ public final class Persister {
         return checkLong(key).orElse(defVal);
     }
     
-    public void putDouble(String key, double value) {
+    public Persister putDouble(String key, double value) {
         doubleVals.put(requireNonNull(key), value);
+        return this;
     }
     
     public OptionalDouble checkDouble(String key) {
