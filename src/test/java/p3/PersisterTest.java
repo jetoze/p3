@@ -134,7 +134,7 @@ public final class PersisterTest {
     }
     
     
-    private static class MockStore extends PersisterStore {
+    private static class MockStore extends PersisterStore<MockStore> {
         private final Persister backer;
         
         public MockStore(Persister backer) {
@@ -162,8 +162,13 @@ public final class PersisterTest {
         }
 
         @Override
-        PersisterStore newChild(String name) {
+        MockStore newChild(String name) {
             return new MockStore(backer.newChild(name));
+        }
+
+        @Override
+        protected MockStore self() {
+            return this;
         }
     }
 }

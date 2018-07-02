@@ -23,7 +23,7 @@ import tzeth.exhume.dom.DomParsers;
 import tzeth.exhume.dom.Elements;
 import tzeth.exhume.dom.XmlPrettyPrint;
 
-public final class XmlPersisterStore extends PersisterStore {
+public final class XmlPersisterStore extends PersisterStore<XmlPersisterStore> {
     // TODO: Key names may not be valid XML names. One option could be to enforce something 
     // like key names having to be valid java identifiers in the Persister class itself. 
     // Another option would be to implement some kind of escape mechanism, and (if necessary) 
@@ -136,11 +136,16 @@ public final class XmlPersisterStore extends PersisterStore {
     }
 
     @Override
-    PersisterStore newChild(String name) {
+    XmlPersisterStore newChild(String name) {
         requireNonNull(name);
         return new XmlPersisterStore(this.document, name, this.element);
     }
     
+    @Override
+    protected XmlPersisterStore self() {
+        return this;
+    }
+
     /**
      * Returns a string representation of the XML.
      */
