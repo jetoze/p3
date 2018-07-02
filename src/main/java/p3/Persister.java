@@ -133,7 +133,7 @@ public final class Persister {
         return list.get(0);
     }
     
-    void storeIn(PersisterStore store) {
+    void storeIn(PersisterStore<?> store) {
         for (Map.Entry<String, String> e: stringVals.entrySet()) {
             store.putString(e.getKey(), e.getValue());
         }
@@ -147,7 +147,7 @@ public final class Persister {
             store.putDouble(e.getKey(), e.getValue());
         }
         for (Map.Entry<String, Persister> e : children.entries()) {
-            PersisterStore childStore = store.newChild(e.getKey());
+            PersisterStore<?> childStore = store.newChild(e.getKey());
             e.getValue().storeIn(childStore);
         }
     }
