@@ -6,6 +6,9 @@ import static java.util.Objects.requireNonNull;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 
 import javax.annotation.Nullable;
 import javax.xml.parsers.DocumentBuilder;
@@ -159,6 +162,11 @@ public final class XmlPersisterStore extends PersisterStore<XmlPersisterStore> {
     public void writeTo(File file) throws IOException {
         requireNonNull(file);
         prettyPrinter().write(this.document, file);
+    }
+    
+    public void writeTo(OutputStream out) throws IOException {
+        requireNonNull(out);
+        prettyPrinter().write(this.document, new OutputStreamWriter(out, StandardCharsets.UTF_8));
     }
     
     private static XmlPrettyPrint prettyPrinter() {
