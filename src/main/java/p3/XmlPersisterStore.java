@@ -17,6 +17,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -114,8 +116,7 @@ public final class XmlPersisterStore extends PersisterStore<XmlPersisterStore> {
         if (intVals == null) {
             intVals = createElement(INT_VALS, element);
         }
-        Element valueElement = createElement(key, intVals);
-        valueElement.setTextContent(String.valueOf(value));
+        intVals.setAttribute(key, String.valueOf(value));
     }
 
     @Override
@@ -124,8 +125,7 @@ public final class XmlPersisterStore extends PersisterStore<XmlPersisterStore> {
         if (longVals == null) {
             longVals = createElement(LONG_VALS, element);
         }
-        Element valueElement = createElement(key, longVals);
-        valueElement.setTextContent(String.valueOf(value));
+        longVals.setAttribute(key, String.valueOf(value));
     }
 
     @Override
@@ -134,8 +134,7 @@ public final class XmlPersisterStore extends PersisterStore<XmlPersisterStore> {
         if (doubleVals == null) {
             doubleVals = createElement(DOUBLE_VALS, element);
         }
-        Element valueElement = createElement(key, doubleVals);
-        valueElement.setTextContent(String.valueOf(value));
+        doubleVals.setAttribute(key, String.valueOf(value));
     }
 
     @Override
@@ -213,25 +212,31 @@ public final class XmlPersisterStore extends PersisterStore<XmlPersisterStore> {
     }
     
     private static void loadInts(Element intVals, Persister p) {
-        for (Element e : Elements.under(intVals)) {
-            String key = e.getNodeName();
-            int value = Integer.parseInt(e.getTextContent().trim());
+        NamedNodeMap attrs = intVals.getAttributes();
+        for (int n = 0; n < attrs.getLength(); ++n) {
+            Node attr = attrs.item(n);
+            String key = attr.getNodeName();
+            int value = Integer.parseInt(attr.getNodeValue());
             p.putInt(key, value);
         }
     }
     
     private static void loadLongs(Element longVals, Persister p) {
-        for (Element e : Elements.under(longVals)) {
-            String key = e.getNodeName();
-            long value = Long.parseLong(e.getTextContent().trim());
+        NamedNodeMap attrs = longVals.getAttributes();
+        for (int n = 0; n < attrs.getLength(); ++n) {
+            Node attr = attrs.item(n);
+            String key = attr.getNodeName();
+            long value = Long.parseLong(attr.getNodeValue());
             p.putLong(key, value);
         }
     }
     
     private static void loadDoubles(Element doubleVals, Persister p) {
-        for (Element e : Elements.under(doubleVals)) {
-            String key = e.getNodeName();
-            double value = Double.parseDouble(e.getTextContent().trim());
+        NamedNodeMap attrs = doubleVals.getAttributes();
+        for (int n = 0; n < attrs.getLength(); ++n) {
+            Node attr = attrs.item(n);
+            String key = attr.getNodeName();
+            double value = Double.parseDouble(attr.getNodeValue());
             p.putDouble(key, value);
         }
     }
