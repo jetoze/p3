@@ -15,15 +15,15 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 
+import tzeth.exhume.dom.Attributes;
 import tzeth.exhume.dom.DomParsers;
 import tzeth.exhume.dom.Elements;
 import tzeth.exhume.dom.XmlPrettyPrint;
@@ -212,31 +212,25 @@ public final class XmlPersisterStore extends PersisterStore<XmlPersisterStore> {
     }
     
     private static void loadInts(Element intVals, Persister p) {
-        NamedNodeMap attrs = intVals.getAttributes();
-        for (int n = 0; n < attrs.getLength(); ++n) {
-            Node attr = attrs.item(n);
-            String key = attr.getNodeName();
-            int value = Integer.parseInt(attr.getNodeValue());
+        for (Attr attr : Attributes.in(intVals)) {
+            String key = attr.getName();
+            int value = Integer.parseInt(attr.getValue());
             p.putInt(key, value);
         }
     }
     
     private static void loadLongs(Element longVals, Persister p) {
-        NamedNodeMap attrs = longVals.getAttributes();
-        for (int n = 0; n < attrs.getLength(); ++n) {
-            Node attr = attrs.item(n);
-            String key = attr.getNodeName();
-            long value = Long.parseLong(attr.getNodeValue());
+        for (Attr attr : Attributes.in(longVals)) {
+            String key = attr.getName();
+            long value = Long.parseLong(attr.getValue());
             p.putLong(key, value);
         }
     }
     
     private static void loadDoubles(Element doubleVals, Persister p) {
-        NamedNodeMap attrs = doubleVals.getAttributes();
-        for (int n = 0; n < attrs.getLength(); ++n) {
-            Node attr = attrs.item(n);
-            String key = attr.getNodeName();
-            double value = Double.parseDouble(attr.getNodeValue());
+        for (Attr attr : Attributes.in(doubleVals)) {
+            String key = attr.getName();
+            double value = Double.parseDouble(attr.getValue());
             p.putDouble(key, value);
         }
     }
