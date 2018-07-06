@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 import javax.annotation.Nullable;
 import javax.xml.parsers.DocumentBuilder;
@@ -212,26 +214,22 @@ public final class XmlPersisterStore extends PersisterStore<XmlPersisterStore> {
     }
     
     private static void loadInts(Element intVals, Persister p) {
-        for (Attr attr : Attributes.in(intVals)) {
-            String key = attr.getName();
-            int value = Integer.parseInt(attr.getValue());
-            p.putInt(key, value);
-        }
+        loadAttrValues(intVals, p, Integer::parseInt, p::putInt);
     }
     
     private static void loadLongs(Element longVals, Persister p) {
-        for (Attr attr : Attributes.in(longVals)) {
-            String key = attr.getName();
-            long value = Long.parseLong(attr.getValue());
-            p.putLong(key, value);
-        }
+        loadAttrValues(longVals, p, Long::parseLong, p::putLong);
     }
     
     private static void loadDoubles(Element doubleVals, Persister p) {
-        for (Attr attr : Attributes.in(doubleVals)) {
+        loadAttrValues(doubleVals, p, Double::parseDouble, p::putDouble);
+    }
+    
+    private static <T> void loadAttrValues(Element e, Persister p, Function<String, T> valueFactory, BiConsumer<String, T> consumer) {
+        for (Attr attr : Attributes.in(e)) {
             String key = attr.getName();
-            double value = Double.parseDouble(attr.getValue());
-            p.putDouble(key, value);
+            T value = valueFactory.apply(attr.getValue());
+            consumer.accept(key, value);
         }
     }
     
