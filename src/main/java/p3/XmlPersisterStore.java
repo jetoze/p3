@@ -214,15 +214,15 @@ public final class XmlPersisterStore extends PersisterStore<XmlPersisterStore> {
     }
     
     private static void loadInts(Element intVals, Persister p) {
-        loadAttrValues(intVals, p, Integer::parseInt, p::putInt);
+        loadAttrValues(intVals, p, Integer::valueOf, p::putInt);
     }
     
     private static void loadLongs(Element longVals, Persister p) {
-        loadAttrValues(longVals, p, Long::parseLong, p::putLong);
+        loadAttrValues(longVals, p, Long::valueOf, p::putLong);
     }
     
     private static void loadDoubles(Element doubleVals, Persister p) {
-        loadAttrValues(doubleVals, p, Double::parseDouble, p::putDouble);
+        loadAttrValues(doubleVals, p, Double::valueOf, p::putDouble);
     }
     
     private static <T> void loadAttrValues(Element e, Persister p, Function<String, T> valueFactory, BiConsumer<String, T> consumer) {
